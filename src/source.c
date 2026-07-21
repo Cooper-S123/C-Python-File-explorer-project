@@ -20,7 +20,7 @@ void list_current_dir(const char *path, void (*python_append_callback)(const cha
     if (strcmp(current->d_name, ".") == 0 || strcmp(current->d_name, "..") == 0) {
         continue;
     }
-    //printf("%s\n", current->d_name);
+    //add the current file to the python list
     python_append_callback(current->d_name);
   }
 
