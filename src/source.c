@@ -3,9 +3,10 @@
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 //function to show files/subfolders in current directory
-void list_current_dir(const char *path, void (*python_append_callback)(const char *)) {
+void list_current_dir(const char *path, void (*python_append_callback)(const char *, const char *)) {
   struct dirent *current;
   DIR *dir = opendir(path);
 
@@ -14,14 +15,20 @@ void list_current_dir(const char *path, void (*python_append_callback)(const cha
     perror("directory didn't open");
     return;
   }
-  
+
+  //loop through the directory
   while ((current = readdir(dir)) != NULL) {
     //remove the local files
     if (strcmp(current->d_name, ".") == 0 || strcmp(current->d_name, "..") == 0) {
         continue;
     }
+    
     //add the current file to the python list
-    python_append_callback(current->d_name);
+    if (current->d_type == DT_DIR) {
+       python_append_callback(current->d_name, "folder");
+    } else {
+       python_append_callback(current->d_name, "file");
+    }
   }
 
 }
